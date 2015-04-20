@@ -11,15 +11,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
 
-/**
- * Created by troyj_000 on 4/17/2015.
- */
 public class Currency extends JavaPlugin implements Listener {
 
 
     public void onEnable() {
 
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new Allowance(), this);
+        getServer().getPluginManager().registerEvents(new TAM(), this);
+        TAM.startTam(this);
 
     }
 
@@ -85,6 +85,14 @@ public class Currency extends JavaPlugin implements Listener {
                                 ChatColor.GREEN + "You have added " + ChatColor.YELLOW + args[2] + "Tickets " +
                                         ChatColor.GREEN + "to the account of " + ChatColor.YELLOW + args[1] +
                                         ChatColor.GREEN + "!");
+                        if (Bukkit.getPlayer(args[1]).isOnline()) {
+
+                            Bukkit.getPlayer(args[1]).sendRawMessage(
+                                    ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " has added " +
+                                            ChatColor.YELLOW + args[2] + " Tickets" + ChatColor.GREEN +
+                                            " to your account!");
+
+                        }
                         return true;
 
                     }
@@ -135,11 +143,21 @@ public class Currency extends JavaPlugin implements Listener {
                             return true;
 
                         }
+                        ObamAPI.openTConnection();
                         ObamAPI.removeTickets(uuid, Double.parseDouble(args[2]), player.getName(), buffer.toString());
                         player.sendRawMessage(
                                 ChatColor.GREEN + "You have removed " + ChatColor.YELLOW + args[2] + " Tickets " +
                                         ChatColor.GREEN + "from the account of " + ChatColor.YELLOW + args[1] +
                                         ChatColor.GREEN + "!");
+                        ObamAPI.closeTConnection();
+                        if (Bukkit.getPlayer(args[1]).isOnline()) {
+
+                            Bukkit.getPlayer(args[1]).sendRawMessage(
+                                    ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " has removed " +
+                                            ChatColor.YELLOW + args[2] + " Tickets" + ChatColor.GREEN +
+                                            " from your account!");
+
+                        }
                         return true;
 
                     }
@@ -232,6 +250,15 @@ public class Currency extends JavaPlugin implements Listener {
                                         "O" + ChatColor.YELLOW + "Bucks " +
                                         ChatColor.GREEN + "to the account of " + ChatColor.YELLOW + args[1] +
                                         ChatColor.GREEN + "!");
+
+                        if (Bukkit.getPlayer(args[1]).isOnline()) {
+
+                            Bukkit.getPlayer(args[1]).sendRawMessage(
+                                    ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " has added " +
+                                            ChatColor.YELLOW + args[2] + ChatColor.DARK_AQUA + " O" + ChatColor.YELLOW +
+                                            "Bucks " + ChatColor.GREEN + " to your account!");
+
+                        }
                         return true;
 
                     }
@@ -289,6 +316,15 @@ public class Currency extends JavaPlugin implements Listener {
                                         ChatColor.DARK_AQUA + "O" + ChatColor.YELLOW + "Bucks " +
                                         ChatColor.GREEN + "from the account of " + ChatColor.YELLOW + args[1] +
                                         ChatColor.GREEN + "!");
+
+                        if (Bukkit.getPlayer(args[1]).isOnline()) {
+
+                            Bukkit.getPlayer(args[1]).sendRawMessage(
+                                    ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " has removed " +
+                                            ChatColor.YELLOW + args[2] + ChatColor.DARK_AQUA + " O" + ChatColor.YELLOW +
+                                            "Bucks" + ChatColor.GREEN + " from your account!");
+
+                        }
                         return true;
 
                     }
@@ -381,6 +417,15 @@ public class Currency extends JavaPlugin implements Listener {
                                         "Stubs " +
                                         ChatColor.GREEN + "to the account of " + ChatColor.YELLOW + args[1] +
                                         ChatColor.GREEN + "!");
+
+                        if (Bukkit.getPlayer(args[1]).isOnline()) {
+
+                            Bukkit.getPlayer(args[1]).sendRawMessage(
+                                    ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " has added " +
+                                            ChatColor.YELLOW + args[2] + " Stubs" + ChatColor.GREEN +
+                                            " to your account!");
+
+                        }
                         return true;
 
                     }
@@ -439,6 +484,14 @@ public class Currency extends JavaPlugin implements Listener {
                                         "Stubs " +
                                         ChatColor.GREEN + "from the account of " + ChatColor.YELLOW + args[1] +
                                         ChatColor.GREEN + "!");
+                        if (Bukkit.getPlayer(args[1]).isOnline()) {
+
+                            Bukkit.getPlayer(args[1]).sendRawMessage(
+                                    ChatColor.YELLOW + player.getName() + ChatColor.GREEN + " has removed " +
+                                            ChatColor.YELLOW + args[2] + " Stubs" + ChatColor.GREEN +
+                                            " from your account!");
+
+                        }
                         return true;
 
                     }
@@ -553,6 +606,61 @@ public class Currency extends JavaPlugin implements Listener {
                                 ChatColor.WHITE + "..::.. More Info: obam.co/stubs");
 
                 return true;
+
+            } else if (cmd.getName().equalsIgnoreCase("tam")) {
+
+                if (args.length < 1) {
+
+                    double total = TAM.getTamTotal(player);
+                    double boost = TAM.getBoost();
+                    int cur = TAM.getTam();
+                    double session = 0;
+                    if (TAM.sessionTam.containsKey(player)) {
+                        session = TAM.sessionTam.get(player);
+                    }
+                    player.sendRawMessage(ChatColor.GREEN + "Total Tickets Earned with -TAM-:");
+                    player.sendRawMessage(ChatColor.YELLOW + String.valueOf(total));
+                    player.sendRawMessage(ChatColor.GREEN + "Total this session:");
+                    player.sendRawMessage(ChatColor.YELLOW + String.valueOf(session));
+                    player.sendRawMessage(ChatColor.GREEN + "Total Tickets:");
+                    player.sendRawMessage(ChatColor.YELLOW + String.valueOf(ObamAPI.getTickets(player.getUniqueId())));
+                    player.sendRawMessage(ChatColor.GREEN + "Current TAM Modifier:");
+                    player.sendRawMessage(ChatColor.YELLOW + String.valueOf(cur));
+                    player.sendRawMessage(ChatColor.GREEN + "Current Supporter Boost");
+                    player.sendRawMessage(ChatColor.YELLOW + String.valueOf(boost));
+                    return true;
+
+                } else if (args[0].equalsIgnoreCase("set")) {
+
+                    if (!player.hasPermission("obam.smod")) {
+
+                        player.sendRawMessage(ChatColor.RED + "You do not have permission to do this!");
+                        return true;
+
+                    } else if (args.length < 2) {
+
+                        player.sendRawMessage(ChatColor.RED + "You must specify an amount!");
+                        return true;
+
+                    } else {
+                        int up = 0;
+                        try {
+                            up = Integer.parseInt(args[1]);
+                        } catch (NumberFormatException e) {
+
+                            player.sendRawMessage(ChatColor.RED + "You must use a number!");
+                            return true;
+
+                        }
+
+                        TAM.setTam(up);
+                        player.sendRawMessage(
+                                ChatColor.GREEN + "You have set the TAM Modifier to " + ChatColor.YELLOW + up);
+                        return true;
+
+                    }
+
+                }
 
             }
 

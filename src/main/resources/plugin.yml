@@ -1,0 +1,25 @@
+name: OBAMCurrency
+main: co.obam.ismooch.currency.Currency
+version: 1.0
+author: iSmooch
+depend: [OBAMAPI]
+commands:
+  tickets:
+    description: check the balance of your Tickets
+    usage: /<command>
+    aliases: [tix]
+  obucks:
+    description: Check the balance of your OBucks
+    usage: /<command>
+  stubs:
+    description: Check the balance of your Stubs
+    usage: /<command>
+  balance:
+    description: Check the balance of OBAM Currencies
+    usage: /<command>
+  pay:
+    description: Pay a player the specified amount of OBucks
+    usage: /<command> [player] [amount]
+  tam:
+    description: Check TAM information
+    usage: /<command>
