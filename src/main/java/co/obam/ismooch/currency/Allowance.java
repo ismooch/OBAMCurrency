@@ -74,10 +74,20 @@ public class Allowance implements Listener {
                 } else {
 
                     Map<TimeUnit, Long> comp = computeDiff(check, now);
-                    e.getPlayer().sendRawMessage(ChatColor.GREEN + "Your next sign in bonus is in " + ChatColor.YELLOW +
-                            (24 - comp.get(TimeUnit.HOURS)) + " Hours" + ChatColor.GREEN + " and " + ChatColor.YELLOW +
-                            (60 - comp.get(TimeUnit.MINUTES)) + " Minutes" + ChatColor.GREEN + "!");
+                    if (comp.get(TimeUnit.MINUTES) > 1) {
+                        e.getPlayer().sendRawMessage(
+                                ChatColor.GREEN + "Your next sign in bonus is in " + ChatColor.YELLOW +
+                                        (23 - comp.get(TimeUnit.HOURS)) + " Hours" + ChatColor.GREEN + " and " +
+                                        ChatColor.YELLOW +
+                                        (59 - comp.get(TimeUnit.MINUTES)) + " Minutes" + ChatColor.GREEN + "!");
 
+                    } else {
+
+                        e.getPlayer().sendRawMessage(
+                                ChatColor.GREEN + "Your next sign in bonus is in " + ChatColor.YELLOW +
+                                        (60 - comp.get(TimeUnit.SECONDS)) + ChatColor.GREEN + "!");
+
+                    }
                 }
 
             }
