@@ -535,6 +535,12 @@ public class Currency extends JavaPlugin implements Listener {
                             " /pay [player] [amount]");
                     return true;
 
+                } else if (player.getName().equalsIgnoreCase(args[0])) {
+
+                    player.sendRawMessage(ChatColor.RED +
+                            "You can not pay yourself... but we can pretend that you switched pockets or something.");
+                    return true;
+
                 } else if (args.length < 2) {
 
                     player.sendRawMessage(
@@ -578,7 +584,7 @@ public class Currency extends JavaPlugin implements Listener {
 
                         Player receive = Bukkit.getPlayer(args[0]);
                         receive.sendRawMessage(ChatColor.GREEN + "You have received " + ChatColor.YELLOW + args[1] +
-                                ChatColor.DARK_AQUA + " 0" + ChatColor.YELLOW + "Bucks " + ChatColor.GREEN + "from " +
+                                ChatColor.DARK_AQUA + " O" + ChatColor.YELLOW + "Bucks " + ChatColor.GREEN + "from " +
                                 ChatColor.YELLOW + player.getName());
 
                     }
