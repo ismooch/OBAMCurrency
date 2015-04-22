@@ -82,7 +82,9 @@ public class Allowance implements Listener {
                     } else {
 
                         PreparedStatement update =
-                                ObamAPI.connection.prepareStatement("UPDATE playerinfo SET LogCheck = CURRENT_TIMESTAMP, DayCount = 0 WHERE uuid = ?");
+                                ObamAPI.connection.prepareStatement("UPDATE playerInfo SET LogCheck = CURRENT_TIMESTAMP, DayCount = 0 WHERE uuid = ?");
+
+                        update.setString(1, uuid.toString());
                         update.executeUpdate();
                     }
 
@@ -91,18 +93,18 @@ public class Allowance implements Listener {
 
                     Map<TimeUnit, Long> comp = computeDiff(check, now);
 
-                    if (comp.get(TimeUnit.DAYS) < 1 && comp.get(TimeUnit.HOURS) == 23 &&
-                            comp.get(TimeUnit.MINUTES) == 59) {
+                    if (comp.get(TimeUnit.DAYS) < 1 && comp.get(TimeUnit.HOURS) != 23 &&
+                            comp.get(TimeUnit.MINUTES) != 59) {
                         e.getPlayer().sendRawMessage(
                                 ChatColor.GREEN + "Your next sign in bonus is in " + ChatColor.YELLOW +
-                                        (24 - comp.get(TimeUnit.HOURS)) + " Hours" + ChatColor.GREEN + " and " +
+                                        (23 - comp.get(TimeUnit.HOURS)) + " Hours" + ChatColor.GREEN + " and " +
                                         ChatColor.YELLOW +
-                                        (60 - comp.get(TimeUnit.MINUTES)) + " Minutes" + ChatColor.GREEN + "!");
+                                        (59 - comp.get(TimeUnit.MINUTES)) + " Minutes" + ChatColor.GREEN + "!");
                     } else {
 
                         e.getPlayer().sendRawMessage(
                                 ChatColor.GREEN + "Your next sign in bonus is in " + ChatColor.YELLOW +
-                                        (60 - comp.get(TimeUnit.SECONDS)) + ChatColor.GREEN + "!");
+                                        (60 - comp.get(TimeUnit.SECONDS)) + " seconds" + ChatColor.GREEN + "!");
 
                     }
 
