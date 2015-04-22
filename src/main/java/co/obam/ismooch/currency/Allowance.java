@@ -16,6 +16,22 @@ import java.util.concurrent.TimeUnit;
 
 public class Allowance implements Listener {
 
+    public static Map<TimeUnit, Long> computeDiff(Date date1, Date date2) {
+        long diffInMillies = date2.getTime() - date1.getTime();
+        List<TimeUnit> units = new ArrayList<TimeUnit>(EnumSet.allOf(TimeUnit.class));
+        Collections.reverse(units);
+
+        Map<TimeUnit, Long> result = new LinkedHashMap<TimeUnit, Long>();
+        long milliesRest = diffInMillies;
+        for (TimeUnit unit : units) {
+            long diff = unit.convert(milliesRest, TimeUnit.MILLISECONDS);
+            long diffInMilliesForUnit = unit.toMillis(diff);
+            milliesRest = milliesRest - diffInMilliesForUnit;
+            result.put(unit, diff);
+        }
+        return result;
+    }
+
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
@@ -74,12 +90,21 @@ public class Allowance implements Listener {
                 } else {
 
                     Map<TimeUnit, Long> comp = computeDiff(check, now);
-                    if (comp.get(TimeUnit.MINUTES) < 1 && comp.get(TimeUnit.DAYS) < 1) {
+
+                    if (comp.get(TimeUnit.DAYS) < 1 && comp.get(TimeUnit.HOURS) == 23 &&
+                            comp.get(TimeUnit.MINUTES) == 59) {
                         e.getPlayer().sendRawMessage(
                                 ChatColor.GREEN + "Your next sign in bonus is in " + ChatColor.YELLOW +
-                                        (23 - comp.get(TimeUnit.HOURS)) + " Hours" + ChatColor.GREEN + " and " +
+                                        (24 - comp.get(TimeUnit.HOURS)) + " Hours" + ChatColor.GREEN + " and " +
                                         ChatColor.YELLOW +
-                                        (59 - comp.get(TimeUnit.MINUTES)) + " Minutes" + ChatColor.GREEN + "!");
+                                        (60 - comp.get(TimeUnit.MINUTES)) + " Minutes" + ChatColor.GREEN + "!");
+                    } else {
+
+                        e.getPlayer().sendRawMessage(
+                                ChatColor.GREEN + "Your next sign in bonus is in " + ChatColor.YELLOW +
+                                        (60 - comp.get(TimeUnit.SECONDS)) + ChatColor.GREEN + "!");
+
+                    }
 
                 }
 
@@ -93,23 +118,6 @@ public class Allowance implements Listener {
         }
 
 
-    }
-
-
-    public static Map<TimeUnit, Long> computeDiff(Date date1, Date date2) {
-        long diffInMillies = date2.getTime() - date1.getTime();
-        List<TimeUnit> units = new ArrayList<TimeUnit>(EnumSet.allOf(TimeUnit.class));
-        Collections.reverse(units);
-
-        Map<TimeUnit, Long> result = new LinkedHashMap<TimeUnit, Long>();
-        long milliesRest = diffInMillies;
-        for (TimeUnit unit : units) {
-            long diff = unit.convert(milliesRest, TimeUnit.MILLISECONDS);
-            long diffInMilliesForUnit = unit.toMillis(diff);
-            milliesRest = milliesRest - diffInMilliesForUnit;
-            result.put(unit, diff);
-        }
-        return result;
     }
 
 
