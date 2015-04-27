@@ -63,10 +63,23 @@ public class Allowance implements Listener {
                         bonus = bonus + 358;
 
                     }
+                    if (e.getPlayer().getName().equalsIgnoreCase("mailman1980")) {
+
+                        bonus = bonus + 500;
+
+                    }
                     ObamAPI.addTickets(uuid, bonus, "OBAM Allowance", "Daily Login Bonus");
-                    e.getPlayer().sendRawMessage(
-                            ChatColor.GREEN + "You have received your daily log in bonus of " + ChatColor.YELLOW +
-                                    bonus + " Tickets" + ChatColor.GREEN + "!");
+                    if (!e.getPlayer().getName().equalsIgnoreCase("mailman1980")) {
+                        e.getPlayer().sendRawMessage(
+                                ChatColor.GREEN + "You have received your daily log in bonus of " + ChatColor.YELLOW +
+                                        bonus + " Tickets" + ChatColor.GREEN + "!");
+                    } else {
+
+                        e.getPlayer().sendRawMessage(
+                                ChatColor.GREEN + "You have received your daily log in bonus of " + ChatColor.YELLOW +
+                                        bonus + " Tickets" + ChatColor.GREEN + " because you are Mailman!");
+
+                    }
                     e.getPlayer().sendRawMessage(ChatColor.GREEN + "Your current balance is " + ChatColor.YELLOW +
                             ObamAPI.getTickets(e.getPlayer().getUniqueId()) + " Tickets" + ChatColor.GREEN + "!");
                     e.getPlayer().sendRawMessage(ChatColor.GREEN + "You have a login streak of " + ChatColor.YELLOW +
